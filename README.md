@@ -253,3 +253,27 @@ Job sites change their HTML, APIs, and bot protection often. Some portals may re
 The "last 24 hours" filter is best-effort. Some portals expose exact posted times, while others only provide text such as "today", "actively hiring", or no date at all. LinkedIn is handled by using its server-side 24-hour search filter and accepting cards with missing posted text.
 
 Generated files such as `HR_Jobs_Last24h.xlsx`, zip archives, and `__pycache__` are runtime artifacts, not source files.
+
+## Render Cron Job
+
+For Render, create a **Cron Job**, not a Web Service.
+
+Recommended Render settings:
+
+```text
+Build Command: pip install -r requirements.txt
+Command: python daily_run.py
+Schedule: 30 5 * * *
+```
+
+`30 5 * * *` runs daily at 05:30 UTC, which is 11:00 AM India time.
+
+Set secrets and profile settings in Render Environment Variables. Do not upload `.env`.
+
+Recommended Render-only setting:
+
+```env
+ENABLE_LINKEDIN=false
+```
+
+LinkedIn uses Selenium/Chrome and may need a Docker setup on Render. Disabling LinkedIn keeps the cron job simpler and lets the requests/API-based portals run first.

@@ -34,6 +34,7 @@ from __future__ import annotations
 import hashlib
 import json
 import logging
+import os
 import random
 import re
 import time
@@ -100,23 +101,40 @@ _FALLBACK_UAS = [
 #  CONFIG
 # ═══════════════════════════════════════════════════════════════════════════════
 
-OUTPUT_FILE        = "HR_Jobs_Last24h.xlsx"
-HEADLESS           = True
-SELENIUM_WAIT      = 15
-MAX_RESULTS_PER_KW = 20
-MAX_JOB_AGE_HOURS  = 24           # strict 24h cutoff
-SEARCH_PAGES       = 2
-REQUEST_TIMEOUT    = 25
-INTER_LO           = 1.5
-INTER_HI           = 4.0
-DEBUG_MODE         = True         # set True to see why jobs get skipped
+def env_bool(name: str, default: bool) -> bool:
+    value = os.getenv(name)
+    if value is None:
+        return default
+    return value.strip().lower() in {"1", "true", "yes", "on"}
 
-ENABLE_LINKEDIN    = True
-ENABLE_NAUKRI      = True
-ENABLE_INDEED      = True
-ENABLE_GLASSDOOR   = True
-ENABLE_SHINE       = True
-ENABLE_INTERNSHALA = True
+
+def env_int(name: str, default: int) -> int:
+    value = os.getenv(name)
+    if value is None:
+        return default
+    try:
+        return int(value)
+    except ValueError:
+        return default
+
+
+OUTPUT_FILE        = os.getenv("OUTPUT_FILE", "HR_Jobs_Last24h.xlsx")
+HEADLESS           = env_bool("HEADLESS", True)
+SELENIUM_WAIT      = env_int("SELENIUM_WAIT", 15)
+MAX_RESULTS_PER_KW = env_int("MAX_RESULTS_PER_KW", 20)
+MAX_JOB_AGE_HOURS  = env_int("MAX_JOB_AGE_HOURS", 24)  # strict 24h cutoff
+SEARCH_PAGES       = env_int("SEARCH_PAGES", 2)
+REQUEST_TIMEOUT    = env_int("REQUEST_TIMEOUT", 25)
+INTER_LO           = float(os.getenv("INTER_LO", "1.5"))
+INTER_HI           = float(os.getenv("INTER_HI", "4.0"))
+DEBUG_MODE         = env_bool("DEBUG_MODE", True)
+
+ENABLE_LINKEDIN    = env_bool("ENABLE_LINKEDIN", True)
+ENABLE_NAUKRI      = env_bool("ENABLE_NAUKRI", True)
+ENABLE_INDEED      = env_bool("ENABLE_INDEED", True)
+ENABLE_GLASSDOOR   = env_bool("ENABLE_GLASSDOOR", True)
+ENABLE_SHINE       = env_bool("ENABLE_SHINE", True)
+ENABLE_INTERNSHALA = env_bool("ENABLE_INTERNSHALA", True)
 
 HR_KEYWORDS = [
 "HR Manager", "HR Executive", "HR Generalist",
