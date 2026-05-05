@@ -1,0 +1,7 @@
+.env
+__pycache__/
+*.pyc
+daily_scraper.log
+HR_Jobs_Last24h.xlsx
+*.zip
+* copy.py

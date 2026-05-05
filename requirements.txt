@@ -1,0 +1,9 @@
+selenium
+webdriver-manager
+requests
+beautifulsoup4
+pandas
+openpyxl
+tqdm
+fake-useragent
+undetected-chromedriver
