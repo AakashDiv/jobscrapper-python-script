@@ -1,0 +1,51 @@
+name: Daily Job Scraper
+
+on:
+  schedule:
+    # GitHub Actions uses UTC. 05:30 UTC = 11:00 AM India time.
+    - cron: "30 5 * * *"
+  workflow_dispatch:
+
+jobs:
+  scrape-and-email:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    env:
+      BREVO_SMTP_HOST: ${{ secrets.BREVO_SMTP_HOST }}
+      BREVO_SMTP_PORT: ${{ secrets.BREVO_SMTP_PORT }}
+      BREVO_SMTP_USER: ${{ secrets.BREVO_SMTP_USER }}
+      BREVO_SMTP_KEY: ${{ secrets.BREVO_SMTP_KEY }}
+      MAIL_FROM: ${{ secrets.MAIL_FROM }}
+      MAIL_FROM_NAME: ${{ secrets.MAIL_FROM_NAME }}
+      MAIL_TO: ${{ secrets.MAIL_TO }}
+      JOB_PROFILES: ${{ secrets.JOB_PROFILES }}
+      PROFILE_HR_NAME: ${{ secrets.PROFILE_HR_NAME }}
+      PROFILE_HR_OUTPUT: ${{ secrets.PROFILE_HR_OUTPUT }}
+      PROFILE_HR_MAIL_TO: ${{ secrets.PROFILE_HR_MAIL_TO }}
+      PROFILE_HR_SUBJECT: ${{ secrets.PROFILE_HR_SUBJECT }}
+      PROFILE_FRONTEND_NAME: ${{ secrets.PROFILE_FRONTEND_NAME }}
+      PROFILE_FRONTEND_OUTPUT: ${{ secrets.PROFILE_FRONTEND_OUTPUT }}
+      PROFILE_FRONTEND_MAIL_TO: ${{ secrets.PROFILE_FRONTEND_MAIL_TO }}
+      PROFILE_FRONTEND_SUBJECT: ${{ secrets.PROFILE_FRONTEND_SUBJECT }}
+      ENABLE_LINKEDIN: "false"
+      DEBUG_MODE: "false"
+      SEND_FAILURE_EMAIL: "false"
+      MAX_RESULTS_PER_KW: "10"
+      SEARCH_PAGES: "1"
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run scraper and email reports
+        run: python daily_run.py
